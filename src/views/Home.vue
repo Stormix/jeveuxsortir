@@ -114,17 +114,14 @@
             >
               <i class="fas fa-cogs" /> Regénérer
             </b-button>
-            <b-button
+            <a
               v-if="generated"
-              type="is-primary"
-              class="ml-2"
-              @click.prevent="save"
+              :href="pdfURL"
+              class="button is-primary ml-2"
+              download="attestation.pdf"
             >
               <i class="fas fa-download" /> Enregistrer
-            </b-button>
-            <b-button v-if="generated" type="is-light" class="ml-2">
-              <i class="fas fa-print" /> Imprimer
-            </b-button>
+            </a>
           </div>
         </div>
         <div class="">
@@ -133,11 +130,7 @@
             class="w-3/4 mx-auto"
             src="img/undraw_social_distancing.svg"
           />
-          <iframe
-            v-else
-            class="w-full h-full"
-            :src="`http://localhost:3000/preview/${pdfPath}`"
-          />
+          <iframe v-else class="w-full h-full" :src="pdfURL" />
         </div>
       </div>
     </section>
@@ -150,6 +143,9 @@ import axios from 'axios'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
+const port = process.env.BACKEND_PORT || 3000
+const host = process.env.HOST || 'localhost'
+const protocol = process.env.HTTP || 'http'
 
 export default {
   name: 'Home',
@@ -169,6 +165,9 @@ export default {
       reason: null,
       generated: false,
       pdfPath: null,
+      port: port,
+      host: host,
+      protocol: protocol,
       options: [
         {
           id: 0,
@@ -216,6 +215,11 @@ export default {
     reasonDesc() {
       let option = this.options.filter(o => o.id === parseInt(this.reason))[0]
       return option !== undefined ? option.desc : null
+    },
+    pdfURL() {
+      return this.pdfPath
+        ? `${protocol}://${host}:${port}/preview/${this.pdfPath}`
+        : '#'
     }
   },
   async mounted() {
@@ -251,7 +255,7 @@ export default {
   },
   sockets: {
     connect: function() {
-      console.log('socket connected')
+      // console.log('socket connected')
     },
     preview: function(data) {
       this.generated = true
@@ -277,9 +281,6 @@ export default {
         reason: this.reason,
         signature: this.signature
       })
-    },
-    save() {
-      // this.generate()
     },
     async addressByCoordinates({ latitude, longitude }) {
       const { data } = await axios.get(ENDPOINT, {

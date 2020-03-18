@@ -8,16 +8,16 @@
       </b-navbar-item>
     </template>
     <template slot="start">
-      <b-navbar-item href="#">
+      <b-navbar-item tag="router-link" :to="{ path: '/' }">
         Accueil
       </b-navbar-item>
-      <b-navbar-item href="#">
+      <b-navbar-item tag="router-link" :to="{ path: '/about' }">
         A propos
       </b-navbar-item>
     </template>
 
-    <!-- <template slot="end">
-      <b-navbar-item tag="div">
+    <template slot="end">
+      <!-- <b-navbar-item tag="div">
         <div class="buttons">
           <a class="button is-primary">
             <strong>Sign up</strong>
@@ -26,8 +26,12 @@
             Log in
           </a>
         </div>
+      </b-navbar-item> -->
+
+      <b-navbar-item tag="router-link" :to="{ path: '/privacy' }">
+        Politique de confidentialité
       </b-navbar-item>
-    </template> -->
+    </template>
   </b-navbar>
 </template>
 

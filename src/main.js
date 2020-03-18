@@ -8,10 +8,15 @@ import 'buefy/dist/buefy.css'
 import VueSignaturePad from 'vue-signature-pad'
 import VueSocketIO from 'vue-socket.io'
 
+const port = process.env.BACKEND_PORT || 3000
+const host = process.env.HOST || 'localhost'
+const protocol = process.env.HTTP || 'http'
+
 Vue.use(
   new VueSocketIO({
     debug: false,
-    connection: 'http://localhost:3000'
+    connection: `${protocol}://${host}:${port}`,
+    secure: protocol === 'https'
   })
 )
 
