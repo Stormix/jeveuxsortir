@@ -10,11 +10,14 @@
     "express:run": "vue-cli-service express:run"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "buefy": "^0.8.13",
     "core-js": "^3.6.4",
     "register-service-worker": "^1.6.2",
     "tailwindcss": "^1.2.0",
     "vue": "^2.6.11",
-    "vue-router": "^3.1.5"
+    "vue-router": "^3.1.5",
+    "vue-signature-pad": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",
