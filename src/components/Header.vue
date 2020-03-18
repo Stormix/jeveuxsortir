@@ -2,10 +2,9 @@
   <b-navbar>
     <template slot="brand">
       <b-navbar-item tag="router-link" :to="{ path: '/' }">
-        <img
-          src="https://raw.githubusercontent.com/buefy/buefy/dev/static/img/buefy-logo.png"
-          alt="Lightweight UI components for Vue.js based on Bulma"
-        />
+        <div class="brand text-primary">
+          JeVeuxSortir
+        </div>
       </b-navbar-item>
     </template>
     <template slot="start">
@@ -36,4 +35,10 @@
 export default {}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+@import url('https://fonts.googleapis.com/css?family=Pacifico&display=swap');
+.brand {
+  font-family: 'Pacifico', cursive;
+  font-size: 1.4rem;
+}
+</style>

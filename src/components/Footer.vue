@@ -2,7 +2,7 @@
   <footer>
     <div class="has-text-centered">
       <p>
-        <strong>JeVeuxSortir</strong> by
+        <strong>JeVeuxSortir</strong> (V0.1) by
         <a href="https://stormix.co">Anas Mazouni</a>. Source code is on
         <a href="https://github.com/Stormix/jeveuxsortir/">Github</a>. The
         website content is licensed

@@ -13,11 +13,16 @@
     "axios": "^0.19.2",
     "buefy": "^0.8.13",
     "core-js": "^3.6.4",
+    "hummus-recipe": "^1.9.4",
+    "pdf-fill-form": "^5.0.1",
     "register-service-worker": "^1.6.2",
+    "socket.io": "^2.3.0",
     "tailwindcss": "^1.2.0",
+    "tmp": "^0.1.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
-    "vue-signature-pad": "^2.0.0"
+    "vue-signature-pad": "^2.0.0",
+    "vue-socket.io": "^3.0.7"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",

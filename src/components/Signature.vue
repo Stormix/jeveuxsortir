@@ -33,10 +33,11 @@
       <div class="flex mb-4">
         <div class="w-10/12">
           <b-upload
-            v-model="dropFiles"
+            v-show="!signatureImage"
+            v-model="files"
             class="w-full"
-            multiple
             drag-drop
+            native
             style="display:block"
           >
             <section class="section">
@@ -48,6 +49,12 @@
               </div>
             </section>
           </b-upload>
+          <img
+            v-if="signatureImage"
+            :src="signatureImage"
+            height="200px"
+            :style="customStyles"
+          />
         </div>
         <div class="w-2/12">
           <div
@@ -55,6 +62,13 @@
           >
             <b-button type="is-danger" @click.prevent="type = null">
               <i class="fas fa-times" />
+            </b-button>
+            <b-button
+              type="is-primary"
+              class="mt-2"
+              @click.prevent="signatureImage = null"
+            >
+              <i class="fas fa-undo" />
             </b-button>
           </div>
         </div>
@@ -77,6 +91,17 @@
         >
           <i class="fas fa-upload" /> Téléverser
         </b-button>
+        <div class="ml-2">
+          <p v-if="signatureImage">
+            Signature enregistrée:
+          </p>
+          <img
+            v-if="signatureImage"
+            :src="signatureImage"
+            class="signatureimage"
+            :style="customStyles"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -86,18 +111,52 @@
 export default {
   data() {
     return {
-      dropFiles: [],
+      files: null,
       customStyles: { border: '#454545 2px solid' },
       type: null,
       signatureImage: null
     }
   },
+  watch: {
+    files(newValue) {
+      if (newValue) {
+        this.readImage()
+      }
+    }
+  },
   methods: {
+    readImage() {
+      const fr = new FileReader()
+      if (!this.files) {
+        return
+      }
+      fr.onload = e => {
+        this.signatureImage = e.target.result
+      }
+      fr.readAsDataURL(this.files)
+    },
     undo() {
       this.$refs.signaturePad.undoSignature()
     },
     clear() {
       this.$refs.signaturePad.clearSignature()
+    },
+    saveSignature() {
+      if (!this.type && !this.signatureImage) {
+        // show error ?
+      }
+      if (this.type == 'draw') {
+        const { isEmpty, data } = this.$refs.signaturePad.saveSignature()
+        if (isEmpty) {
+          // show warning!
+          this.signatureImage = null
+          return
+        }
+        this.signatureImage = data
+      }
+      if (this.type == 'upload') {
+        this.readImage()
+      }
     },
     download() {
       const { isEmpty, data } = this.$refs.signaturePad.saveSignature()
@@ -114,4 +173,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.signatureimage {
+  max-height: 200px;
+}
+</style>

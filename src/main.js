@@ -6,6 +6,14 @@ import './assets/tailwind.css'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 import VueSignaturePad from 'vue-signature-pad'
+import VueSocketIO from 'vue-socket.io'
+
+Vue.use(
+  new VueSocketIO({
+    debug: false,
+    connection: 'http://localhost:3000'
+  })
+)
 
 Vue.use(VueSignaturePad)
 Vue.use(Buefy)
