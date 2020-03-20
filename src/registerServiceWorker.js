@@ -21,9 +21,10 @@ if (process.env.NODE_ENV === 'production') {
     },
     updated() {
       console.log('New content is available; refreshing..')
-      setTimeout(() => {
-        window.location.reload(true)
-      }, 1000)
+      // Nightmare Nightmare Nightmare Nightmare Nightmare Nightmare
+      // setTimeout(() => {
+      //   window.location.reload(true)
+      // }, 1000)
     },
     offline() {
       console.log(
