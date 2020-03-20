@@ -59,15 +59,8 @@ export default {
       showMenu: true
     }
   },
-  computed: {
-    mobileMenu() {
-      return isMobile  
-    }
-  },
-  watch: {
-    mobileMenu(newValue) {
-      this.showMenu = newValue
-    }
+  mounted() {
+    this.showMenu = !isMobile
   },
   methods: {
     toggleMenu() {

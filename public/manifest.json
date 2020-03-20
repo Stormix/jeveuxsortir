@@ -1,0 +1,20 @@
+{
+    "name": "Je veux sortir",
+    "short_name": "sortir.wtf",
+    "icons": [
+      {
+        "src": "./img/sortir.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "./img/sortir.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ],
+    "start_url": "./index.html",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#667eea"
+  }
