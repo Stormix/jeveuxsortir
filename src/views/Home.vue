@@ -1,8 +1,6 @@
 <template>
   <div class="container mx-auto">
-    <div
-      class="grid lg:grid-cols-2 lg:grid-rows-1 grid-flow-col md:grid-rows-2 sm:grid-rows-2 gap-4"
-    >
+    <div class="grid gap-4 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1">
       <div class="w-full rounded overflow-hidden shadow-lg px-8 pt-6 pb-8 mb-4">
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
@@ -64,19 +62,6 @@
                 {{ option.text }}
               </option>
             </select>
-            <div
-              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
-            >
-              <svg
-                class="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
-                />
-              </svg>
-            </div>
           </div>
 
           <small v-if="reasonDesc">

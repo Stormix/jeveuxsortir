@@ -13,6 +13,7 @@
       <div class="block lg:hidden">
         <button
           class="flex items-center px-3 py-2 border rounded text-indigo-200 border-indigo-400 hover:text-white hover:border-white"
+          @click.prevent="toggleMenu"
         >
           <svg
             class="fill-current h-3 w-3"
@@ -24,7 +25,10 @@
           </svg>
         </button>
       </div>
-      <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
+      <div
+        v-show="showMenu"
+        class="w-full block flex-grow lg:flex lg:items-center lg:w-auto"
+      >
         <div class="text-sm lg:flex-grow">
           <router-link
             class="block mt-4 lg:inline-block lg:mt-0 text-indigo-200 hover:text-white"
@@ -47,7 +51,30 @@
 </template>
 
 <script>
-export default {}
+import { isMobile } from 'mobile-device-detect'
+
+export default {
+  data() {
+    return {
+      showMenu: true
+    }
+  },
+  computed: {
+    mobileMenu() {
+      return isMobile  
+    }
+  },
+  watch: {
+    mobileMenu(newValue) {
+      this.showMenu = newValue
+    }
+  },
+  methods: {
+    toggleMenu() {
+      this.showMenu = !this.showMenu
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
