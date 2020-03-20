@@ -1,6 +1,6 @@
 <template>
   <div
-    class="container mt-10 w-1/3 md:w-full sm:w-full rounded overflow-hidden shadow-lg px-8 pt-6 pb-8 mb-4 text-lg"
+    class="container mt-10 lg:w-1/3 md:w-full sm:w-full rounded overflow-hidden shadow-lg px-8 pt-6 pb-8 mb-4 text-lg"
   >
     <h1 class="text-5xl">
       Politique de confidentialité
