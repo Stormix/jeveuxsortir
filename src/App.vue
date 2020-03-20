@@ -1,9 +1,8 @@
 <template>
-  <div id="app" class="container flex flex-col min-h-screen ">
+  <div id="app" class="flex flex-col min-h-screen ">
     <Header />
-
-    <main class="flex-grow">
-      <router-view />
+    <main class="flex-grow flex justify-center ">
+      <router-view class=" my-auto" />
     </main>
     <Footer />
   </div>
