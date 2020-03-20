@@ -14,8 +14,8 @@ Vue.use(
   new VueSocketIO({
     debug: false,
     connection:
-      protocol === 'https'
-        ? `${protocol}://${host}/sockets`
+      process.env.NODE_ENV === 'production'
+        ? `${protocol}://${host}/`
         : `${protocol}://${host}:${port}`,
     secure: protocol === 'https'
   })

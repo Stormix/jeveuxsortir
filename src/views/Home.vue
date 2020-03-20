@@ -208,7 +208,9 @@ export default {
     },
     pdfURL() {
       return this.pdfPath
-        ? `${protocol}://${host}:${port}/preview/${this.pdfPath}`
+        ? process.env.NODE_ENV === 'production'
+          ? `${protocol}://${host}/preview/${this.pdfPath}`
+          : `${protocol}://${host}:${port}/preview/${this.pdfPath}`
         : '#'
     }
   },
