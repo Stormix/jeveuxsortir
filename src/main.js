@@ -13,7 +13,10 @@ const protocol = process.env.VUE_APP_HTTP || 'http'
 Vue.use(
   new VueSocketIO({
     debug: false,
-    connection: `${protocol}://${host}:${port}`,
+    connection:
+      protocol === 'https'
+        ? `${protocol}://${host}/sockets`
+        : `${protocol}://${host}:${port}`,
     secure: protocol === 'https'
   })
 )
