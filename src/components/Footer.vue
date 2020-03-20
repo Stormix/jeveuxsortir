@@ -1,13 +1,19 @@
 <template>
   <footer>
-    <div class="has-text-centered">
+    <div class="mx-auto text-center">
       <p>
         <strong>JeVeuxSortir</strong> (V0.1) by
-        <a href="https://stormix.co">Anas Mazouni</a>. Source code is on
-        <a href="https://github.com/Stormix/jeveuxsortir/">Github</a>. The
-        website content is licensed
-        <a href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
-          CC BY NC SA 4.0
+        <a class="text-indigo-700" href="https://stormix.co">Anas Mazouni</a>.
+        Source code is on
+        <a
+          class="text-indigo-700"
+          href="https://github.com/Stormix/jeveuxsortir/"
+        >
+          Github
+        </a>
+        . Illustration by
+        <a class="text-indigo-700" href="https://undraw.co">
+          undraw.co
         </a>
       </p>
     </div>

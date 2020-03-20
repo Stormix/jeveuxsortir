@@ -13,18 +13,30 @@
           <div
             class="flex items-center flex-col content-center w-full justify-center"
           >
-            <b-button type="is-danger" @click.prevent="type = null">
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              @click.prevent="type = null"
+            >
               <i class="fas fa-times" />
-            </b-button>
-            <b-button type="is-primary" class="mt-1" @click.prevent="undo">
+            </button>
+            <button
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-1"
+              @click.prevent="undo"
+            >
               <i class="fas fa-undo" />
-            </b-button>
-            <b-button type="is-primary" class="mt-1" @click.prevent="clear">
+            </button>
+            <button
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-1"
+              @click.prevent="clear"
+            >
               <i class="fas fa-eraser" />
-            </b-button>
-            <b-button type="is-primary" class="mt-1" @click.prevent="download">
+            </button>
+            <button
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-1"
+              @click.prevent="download"
+            >
               <i class="fas fa-download" />
-            </b-button>
+            </button>
           </div>
         </div>
       </div>
@@ -32,9 +44,8 @@
     <div v-if="type == 'upload'">
       <div class="flex mb-4">
         <div class="w-10/12">
-          <b-upload
-            v-show="!signatureImage"
-            v-model="files"
+          <!-- <b-upload
+            
             class="w-full"
             drag-drop
             native
@@ -48,7 +59,32 @@
                 <p>Déposez vos fichiers ici ou cliquez pour téléverser</p>
               </div>
             </section>
-          </b-upload>
+          </b-upload> -->
+          <label
+            v-show="!signatureImage"
+            class="w-full flex flex-col items-center px-4 py-6 bg-white text-blue rounded-lg shadow-lg tracking-wide uppercase border border-indigo-700 cursor-pointer hover:bg-indigo-700 hover:text-white"
+          >
+            <svg
+              class="w-8 h-8"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+            >
+              <path
+                d="M16.88 9.1A4 4 0 0 1 16 17H5a5 5 0 0 1-1-9.9V7a3 3 0 0 1 4.52-2.59A4.98 4.98 0 0 1 17 8c0 .38-.04.74-.12 1.1zM11 11h3l-4-4-4 4h3v3h2v-3z"
+              />
+            </svg>
+            <span class="mt-2 leading-normal">
+              Cliquez pour téléverser
+            </span>
+            <input
+              id="file"
+              ref="file"
+              type="file"
+              class="hidden"
+              @change="handleFileUpload()"
+            />
+          </label>
           <img
             v-if="signatureImage"
             :src="signatureImage"
@@ -60,16 +96,18 @@
           <div
             class="flex items-center flex-col content-center w-full justify-center"
           >
-            <b-button type="is-danger" @click.prevent="type = null">
+            <button
+              class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              @click.prevent="type = null"
+            >
               <i class="fas fa-times" />
-            </b-button>
-            <b-button
-              type="is-primary"
-              class="mt-2"
+            </button>
+            <button
+              class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded mt-2"
               @click.prevent="signatureImage = null"
             >
               <i class="fas fa-undo" />
-            </b-button>
+            </button>
           </div>
         </div>
       </div>
@@ -78,19 +116,21 @@
       <div
         class="flex items-center flex-row content-between w-full justify-center"
       >
-        <b-button type="is-primary" class="" @click.prevent="type = 'draw'">
+        <button
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+          @click.prevent="type = 'draw'"
+        >
           <i class="fas fa-marker" /> Dessiner
-        </b-button>
+        </button>
         <p class="ml-2">
           ou
         </p>
-        <b-button
-          type="is-primary"
-          class="ml-2"
+        <button
+          class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded ml-2"
           @click.prevent="type = 'upload'"
         >
           <i class="fas fa-upload" /> Téléverser
-        </b-button>
+        </button>
         <div class="ml-2">
           <p v-if="signatureImage">
             Signature enregistrée:
@@ -125,6 +165,9 @@ export default {
     }
   },
   methods: {
+    handleFileUpload() {
+      this.files = this.$refs.file.files[0]
+    },
     readImage() {
       const fr = new FileReader()
       if (!this.files) {

@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "buefy": "^0.8.13",
     "core-js": "^3.6.4",
     "hummus-recipe": "^1.9.4",
     "pdf-fill-form": "^5.0.1",
@@ -21,8 +20,10 @@
     "tmp": "^0.1.0",
     "vue": "^2.6.11",
     "vue-router": "^3.1.5",
+    "vue-select": "^3.9.3",
     "vue-signature-pad": "^2.0.0",
-    "vue-socket.io": "^3.0.7"
+    "vue-socket.io": "^3.0.7",
+    "vuejs-datepicker": "^1.6.2"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",

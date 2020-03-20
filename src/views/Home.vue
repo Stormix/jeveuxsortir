@@ -1,145 +1,131 @@
 <template>
-  <div class="mt-10">
-    <section class="hero is-small is-bold">
-      <div class="mb-2">
-        <h1 class="title is-spaced">
-          Générateur d'attestation de déplacement
-        </h1>
-        <h2 class="subtitle">
-          Primary bold subtitle
-        </h2>
-      </div>
-    </section>
+  <div class="container mx-auto">
+    <div
+      class="grid lg:grid-cols-2 lg:grid-rows-1 grid-flow-col md:grid-rows-2 sm:grid-rows-2 gap-4"
+    >
+      <div class="w-full rounded overflow-hidden shadow-lg px-8 pt-6 pb-8 mb-4">
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
+            Nom Complet
+          </label>
+          <input
+            id="name"
+            v-model="name"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+            placeholder="Mme / M. ..."
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="address"
+          >
+            Demeurant
+          </label>
+          <input
+            id="address"
+            v-model="address"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+            placeholder="Demeurant"
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="address"
+          >
+            Né le
+          </label>
+          <datepicker
+            v-model="birthday"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            placeholder="Né le ..."
+          />
+        </div>
+        <div class="mb-4">
+          <label
+            class="block text-gray-700 text-sm font-bold mb-2"
+            for="reason"
+          >
+            Motif de déplacement:
+          </label>
 
-    <section class="mt-2">
-      <div
-        class="grid lg:grid-cols-2 lg:grid-rows-1 grid-flow-col md:grid-rows-2 sm:grid-rows-2 gap-4"
-      >
-        <div class="card">
-          <!-- <b-message type="is-danger" has-icon>
-            <div class=" my-auto">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-            </div>
-          </b-message>
-
-          <b-message type="is-info" has-icon>
-            Motif séléctionnér: déplacements entre le domicile et le lieu
-            d’exercice de l’activité professionnelle, lorsqu’ils sont
-            indispensables à l’exercice d’activités ne pouvant être organisées
-            sous forme de télétravail (sur justificatif permanent) ou
-            déplacements professionnels ne pouvant être différés ;
-          </b-message>
-
-          <b-message type="is-warning" has-icon>
-            Lorem ipsum dolor sit amet, consectetur warning elit. Fusce id
-            fermentum quam. Proin sagittis, nibh id hendrerit imperdiet, elit
-            sapien laoreet elit
-          </b-message> -->
-
-          <b-field label="Nom Complet:">
-            <b-input
-              v-model="name"
-              required
-              icon-pack="fas"
-              icon="user"
-              placeholder="Mme / M. ..."
-              validation-message="Only lowercase is allowed"
-            />
-          </b-field>
-          <b-field label="Date de naissance:">
-            <b-datepicker
-              v-model="birthday"
-              :show-week-number="showWeekNumber"
-              placeholder="Né le ..."
-              icon="calendar-today"
-              trap-focus
-              required
-            />
-          </b-field>
-          <b-field label="Demeurant:">
-            <b-input
-              v-model="address"
-              placeholder="Demeurant"
-              type="text"
-              icon-pack="fas"
-              icon="home"
-              required
-            />
-          </b-field>
-          <b-field label="Motif de déplacement:">
-            <b-select
-              v-model="reason"
-              placeholder="Motif de déplacement"
-              expanded
-            >
-              <option
-                v-for="option in options"
-                :key="option.id"
-                :value="option.id"
-                required
-              >
-                {{ option.text }}
-              </option>
-            </b-select>
-          </b-field>
+          <v-select
+            id="reason"
+            v-model="reason"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            label="text"
+            :options="options"
+          />
 
           <small v-if="reasonDesc">
             <b>Description:</b>
             {{ reasonDesc }}
           </small>
-          <b-field label="Fait à:" class="mt-2">
-            <b-input
-              v-model="city"
-              placeholder="Ville"
-              type="text"
-              icon-pack="fas"
-              icon="map-marker"
-            />
-          </b-field>
-          <b-field label="Signature:">
-            <Signature ref="signature" class="sign my-auto" />
-          </b-field>
-          <div class="flex items-center ">
-            <b-button
-              v-if="!generated"
-              type="is-success"
-              @click.prevent="generate"
-            >
-              <i class="fas fa-cogs" /> Générer mon attestation
-            </b-button>
-            <b-button
-              v-if="generated"
-              type="is-success"
-              @click.prevent="generate"
-            >
-              <i class="fas fa-cogs" /> Regénérer
-            </b-button>
-            <a
-              v-if="generated"
-              :href="pdfURL"
-              class="button is-primary ml-2"
-              download="attestation.pdf"
-            >
-              <i class="fas fa-download" /> Enregistrer
-            </a>
-          </div>
         </div>
-        <div class="">
-          <img
-            v-if="!generated"
-            class="w-3/4 mx-auto"
-            src="img/undraw_social_distancing.svg"
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+            Fait à
+          </label>
+          <input
+            id="city"
+            v-model="city"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+            placeholder="Ville"
           />
-          <iframe v-else class="w-full h-full" :src="pdfURL" />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+            Signature
+          </label>
+          <Signature ref="signature" class="sign my-auto" />
+        </div>
+
+        <div class="flex items-center ">
+          <button
+            v-if="!generated"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+            @click.prevent="generate"
+          >
+            <i class="fas fa-cogs" /> Générer mon attestation
+          </button>
+          <button
+            v-if="generated"
+            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+            @click.prevent="generate"
+          >
+            <i class="fas fa-cogs" /> Regénérer
+          </button>
+          <a
+            v-if="generated"
+            :href="pdfURL"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded ml-2"
+            download="attestation.pdf"
+          >
+            <i class="fas fa-download" /> Enregistrer
+          </a>
         </div>
       </div>
-    </section>
+      <div class="">
+        <img
+          v-if="!generated"
+          class="w-3/4 mx-auto"
+          src="img/undraw_social_distancing.svg"
+        />
+        <iframe v-else class="w-full h-full" :src="pdfURL" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Signature from '@/components/Signature'
 import axios from 'axios'
+import Datepicker from 'vuejs-datepicker'
+import vSelect from 'vue-select'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
@@ -150,7 +136,9 @@ const protocol = process.env.HTTP || 'http'
 export default {
   name: 'Home',
   components: {
-    Signature
+    Signature,
+    Datepicker,
+    vSelect
   },
   data() {
     return {
@@ -213,8 +201,7 @@ export default {
       return null
     },
     reasonDesc() {
-      let option = this.options.filter(o => o.id === parseInt(this.reason))[0]
-      return option !== undefined ? option.desc : null
+      return this.reason ? this.reason.desc : ''
     },
     pdfURL() {
       return this.pdfPath
@@ -247,7 +234,10 @@ export default {
       this.city = localStorage.city
     }
     if (localStorage.reason) {
-      this.reason = localStorage.reason
+      let option = this.options.filter(
+        o => o.id === parseInt(localStorage.reason)
+      )[0]
+      this.reason = option
     }
     if (localStorage.signature && this.$refs.signature) {
       this.$refs.signature.$data.signatureImage = localStorage.signature
@@ -264,7 +254,7 @@ export default {
   },
   methods: {
     persist() {
-      localStorage.setItem('reason', this.reason)
+      localStorage.setItem('reason', this.reason.id)
       localStorage.setItem('name', this.name)
       localStorage.setItem('birthday', this.birthday)
       localStorage.setItem('address', this.address)
@@ -278,7 +268,7 @@ export default {
         birthday: this.birthday,
         address: this.address,
         city: this.city,
-        reason: this.reason,
+        reason: this.reason.id,
         signature: this.signature
       })
     },
@@ -314,6 +304,8 @@ export default {
 </script>
 
 <style lang="scss">
+@import 'vue-select/src/scss/vue-select.scss';
+
 .sign {
   min-height: 6rem;
 }
@@ -323,5 +315,8 @@ export default {
 .media-content {
   margin-top: auto;
   margin-bottom: auto;
+}
+.vs__dropdown-toggle {
+  border: none;
 }
 </style>

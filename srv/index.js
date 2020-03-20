@@ -21,11 +21,11 @@ export default (app, http) => {
       const filledFields = {
         'Champ de texte 2.Page 1': `${dt.getDate()}-${dt.getMonth() +
           1}-${dt.getFullYear()}`,
-        'Champ de texte 1.Page 1': name,
+        'Champ de texte 1.Page 1': name + '\r\n',
         'Champ de texte 3.Page 1': address,
         'Champ de texte 4.Page 1': city,
-        'Champ de texte 5.Page 1': day,
-        'Champ de texte 7.Page 1': month
+        'Champ de texte 5.Page 1': day + '\r\n',
+        'Champ de texte 7.Page 1': month + '\r\n'
       }
       const signedPDF = tmp.fileSync()
       const signatureFile = tmp.fileSync()
