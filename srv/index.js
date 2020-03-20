@@ -16,16 +16,16 @@ export default (app, http) => {
       const templatePath = './srv/bin/template.pdf'
       const currentDate = new Date()
       const dt = new Date(birthday)
-      const month = currentDate.getMonth() + 1
+      const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
       const day = ('0' + currentDate.getDate()).slice(-2)
       const filledFields = {
         'Champ de texte 2.Page 1': `${dt.getDate()}-${dt.getMonth() +
           1}-${dt.getFullYear()}`,
         'Champ de texte 1.Page 1': name + '\r\n',
-        'Champ de texte 3.Page 1': address,
-        'Champ de texte 4.Page 1': city,
-        'Champ de texte 5.Page 1': day + '\r\n',
-        'Champ de texte 7.Page 1': month + '\r\n'
+        'Champ de texte 3.Page 1': address
+        // 'Champ de texte 4.Page 1': city
+        // 'Champ de texte 5.Page 1': day + '\r\n',
+        // 'Champ de texte 7.Page 1': month + '\r\n'
       }
       const signedPDF = tmp.fileSync()
       const signatureFile = tmp.fileSync()
@@ -51,6 +51,9 @@ export default (app, http) => {
       const height = pdfDoc.metadata['1'].height
       pdfDoc
         .editPage(1)
+        .text(city, width - 220, height - 150, { color: '#000000', bold: true })
+        .text(day, width - 120, height - 150, { color: '#000000' })
+        .text(month, width - 95, height - 150, { color: '#000000' })
         .image(signatureFile.name, width - 150, height - 100, {
           height: 45,
           keepAspectRatio: true
