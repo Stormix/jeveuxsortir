@@ -10020,11 +10020,6 @@ vue-router@^3.1.5:
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.1.6.tgz#45f5a3a3843e31702c061dd829393554e4328f89"
   integrity sha512-GYhn2ynaZlysZMkFE5oCHRUTqE8BWs/a9YbKpNLi0i7xD6KG1EzDqpHQmv1F5gXjr8kL5iIVS8EOtRaVUEXTqA==
 
-vue-select@^3.9.3:
-  version "3.9.3"
-  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.9.3.tgz#124093b60f28d742b62ec4f4801266a0f6889590"
-  integrity sha512-+yVyPr+2lbzLjbdnXQ8pJ/MEH1aA2PO6iDjdIQajlUTd1Z1F+2ET21BcHpbJpRxmyzogqZQgAOUGugvsLG0sDQ==
-
 vue-signature-pad@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/vue-signature-pad/-/vue-signature-pad-2.0.0.tgz#a2d768b10b2396ac2310cd7e7defeaa8bfce60fb"

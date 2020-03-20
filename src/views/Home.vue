@@ -51,14 +51,33 @@
           >
             Motif de déplacement:
           </label>
-
-          <v-select
-            id="reason"
-            v-model="reason"
-            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            label="text"
-            :options="options"
-          />
+          <div class="">
+            <select
+              v-model="reason"
+              class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+            >
+              <option
+                v-for="option in options"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.text }}
+              </option>
+            </select>
+            <div
+              class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700"
+            >
+              <svg
+                class="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                />
+              </svg>
+            </div>
+          </div>
 
           <small v-if="reasonDesc">
             <b>Description:</b>
@@ -125,7 +144,6 @@
 import Signature from '@/components/Signature'
 import axios from 'axios'
 import Datepicker from 'vuejs-datepicker'
-import vSelect from 'vue-select'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
@@ -137,8 +155,7 @@ export default {
   name: 'Home',
   components: {
     Signature,
-    Datepicker,
-    vSelect
+    Datepicker
   },
   data() {
     return {
@@ -201,7 +218,8 @@ export default {
       return null
     },
     reasonDesc() {
-      return this.reason ? this.reason.desc : ''
+      const option = this.options.find(o => o.id == parseInt(this.reason))
+      return option && option.desc ? option.desc : ''
     },
     pdfURL() {
       return this.pdfPath
@@ -234,10 +252,7 @@ export default {
       this.city = localStorage.city
     }
     if (localStorage.reason) {
-      let option = this.options.filter(
-        o => o.id === parseInt(localStorage.reason)
-      )[0]
-      this.reason = option
+      this.reason = localStorage.reason
     }
     if (localStorage.signature && this.$refs.signature) {
       this.$refs.signature.$data.signatureImage = localStorage.signature
@@ -254,7 +269,7 @@ export default {
   },
   methods: {
     persist() {
-      localStorage.setItem('reason', this.reason.id)
+      localStorage.setItem('reason', this.reason)
       localStorage.setItem('name', this.name)
       localStorage.setItem('birthday', this.birthday)
       localStorage.setItem('address', this.address)
@@ -268,7 +283,7 @@ export default {
         birthday: this.birthday,
         address: this.address,
         city: this.city,
-        reason: this.reason.id,
+        reason: this.reason,
         signature: this.signature
       })
     },
@@ -304,8 +319,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import 'vue-select/src/scss/vue-select.scss';
-
 .sign {
   min-height: 6rem;
 }
@@ -315,8 +328,5 @@ export default {
 .media-content {
   margin-top: auto;
   margin-bottom: auto;
-}
-.vs__dropdown-toggle {
-  border: none;
 }
 </style>
