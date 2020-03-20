@@ -6,9 +6,9 @@ import './assets/tailwind.css'
 import VueSignaturePad from 'vue-signature-pad'
 import VueSocketIO from 'vue-socket.io'
 
-const port = process.env.BACKEND_PORT || 3000
-const host = process.env.HOST || 'localhost'
-const protocol = process.env.HTTP || 'http'
+const port = process.env.VUE_APP_BACKEND_PORT || 3000
+const host = process.env.VUE_APP_HOST || 'localhost'
+const protocol = process.env.VUE_APP_HTTP || 'http'
 
 Vue.use(
   new VueSocketIO({

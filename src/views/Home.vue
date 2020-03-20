@@ -132,9 +132,9 @@ import Datepicker from 'vuejs-datepicker'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
-const port = process.env.BACKEND_PORT || 3000
-const host = process.env.HOST || 'localhost'
-const protocol = process.env.HTTP || 'http'
+const port = process.env.VUE_APP_BACKEND_PORT || 3000
+const host = process.env.VUE_APP_HOST || 'localhost'
+const protocol = process.env.VUE_APP_HTTP || 'http'
 
 export default {
   name: 'Home',
