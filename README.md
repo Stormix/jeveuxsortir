@@ -1,4 +1,4 @@
-# JeVeuxS ortir - Générateur d'attestation de déplacement
+# JeVeuxSortir - Générateur d'attestation de déplacement
 
 ## Project setup
 
@@ -22,4 +22,10 @@ yarn build
 
 ```
 yarn lint
+```
+
+### Start backend server
+
+```
+yarn express:run
 ```

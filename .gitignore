@@ -21,7 +21,7 @@ yarn-error.log*
 *.sw?
 *.log 
 *.pdf
-
+*.conf
 # Keep template
 
 !/srv/bin/template.pdf

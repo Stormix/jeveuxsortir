@@ -1,8 +1,12 @@
 <template>
-  <div class="container mx-auto">
+  <div class="container mx-auto my-auto">
     <div class="grid gap-4 lg:grid-cols-2 md:grid-cols-1 sm:grid-cols-1">
       <div class="w-full rounded overflow-hidden shadow-lg px-8 pt-6 pb-8 mb-4">
-        <div class="mb-4">
+        <h1 class="text-3xl">
+          Générateur d'attestation de déplacement
+        </h1>
+
+        <div class="mt-4 mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
             Nom Complet
           </label>
@@ -87,7 +91,31 @@
           </label>
           <Signature ref="signature" class="sign my-auto" />
         </div>
-
+        <div
+          class="flex items-center bg-blue-500 text-white text-sm px-4 py-3 mb-2 mt-2"
+          role="alert"
+        >
+          <svg
+            class="fill-current w-4 h-4 mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+          >
+            <path
+              d="M12.432 0c1.34 0 2.01.912 2.01 1.957 0 1.305-1.164 2.512-2.679 2.512-1.269 0-2.009-.75-1.974-1.99C9.789 1.436 10.67 0 12.432 0zM8.309 20c-1.058 0-1.833-.652-1.093-3.524l1.214-5.092c.211-.814.246-1.141 0-1.141-.317 0-1.689.562-2.502 1.117l-.528-.88c2.572-2.186 5.531-3.467 6.801-3.467 1.057 0 1.233 1.273.705 3.23l-1.391 5.352c-.246.945-.141 1.271.106 1.271.317 0 1.357-.392 2.379-1.207l.6.814C12.098 19.02 9.365 20 8.309 20z"
+            />
+          </svg>
+          <p>
+            Apparement les versions numériques de l'attestation ne sont plus
+            acceptées. Veuillez imprimer le document généré pour éviter les
+            problèmes avec les autorités.
+            <a
+              class="font-bold"
+              href="https://twitter.com/Place_Beauvau/status/1240236276416118784"
+            >
+              Source
+            </a>
+          </p>
+        </div>
         <div class="flex items-center ">
           <button
             v-if="!generated"
