@@ -23,9 +23,9 @@
           Le seul but de ce site web est de simplifier la vie des utilisateurs
           qui doivent remplir le formulaire tous les jours. Aucune donnée
           personnelle n'est enregistrée sur nos serveurs. En fait, rien n'est
-          enregistré et tous les documents générés sont temporaires. Le site Web
-          utilise le document officiel et le remplit de la même manière que vous
-          le feriez manuellement.
+          enregistré et tous les documents générés sont sur votre appareil
+          uniquement. Le site Web utilise le document officiel et le remplit de
+          la même manière que vous l'aurait fait manuellement.
           <br />
           Cela dit, vous pouvez rédiger votre propre version par écrit.
           <br />
