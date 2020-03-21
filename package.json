@@ -5,26 +5,21 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "express": "vue-cli-service express:watch",
-    "express:run": "vue-cli-service express:run"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.19.2",
     "core-js": "^3.6.4",
-    "hummus-recipe": "^1.9.4",
     "mobile-device-detect": "^0.3.3",
-    "pdf-fill-form": "^5.0.1",
+    "pdf-lib": "^1.4.1",
     "register-service-worker": "^1.6.2",
     "socket.io": "^2.3.0",
     "tailwindcss": "^1.2.0",
-    "tmp": "^0.1.0",
     "vue": "^2.6.11",
     "vue-cookie-law": "^1.12.0",
     "vue-disqus": "^3.0.5",
     "vue-router": "^3.1.5",
-    "vue-signature-pad": "^2.0.0",
-    "vue-socket.io": "^3.0.7"
+    "vue-signature-pad": "^2.0.0"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "~4.2.0",

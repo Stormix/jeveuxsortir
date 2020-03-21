@@ -24,4 +24,4 @@ yarn-error.log*
 *.conf
 # Keep template
 
-!/srv/bin/template.pdf
+!/public/bin/template.pdf

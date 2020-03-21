@@ -121,7 +121,7 @@
           <Signature ref="signature" class="sign my-auto" />
         </div>
         <div
-          class="flex items-center bg-blue-500 text-white text-sm px-4 py-3 mb-2 mt-2"
+          class="flex items-center bg-yellow-500 text-black text-sm px-4 py-3 mb-2 mt-2"
           role="alert"
         >
           <svg
@@ -135,13 +135,19 @@
           </svg>
           <p>
             Attention! les versions numériques de l'attestation ne sont plus
-            acceptées. Veuillez imprimer le document généré pour éviter les
-            problèmes avec les autorités.
-            <a
+            acceptées. Veuillez imprimer le document généré.<a
               class="font-bold"
               href="https://twitter.com/Place_Beauvau/status/1240236276416118784"
             >
               Source
+            </a>
+            <br />
+            Vous pouvez trouver l'attestation officielle
+            <a
+              class="font-bold"
+              href="https://www.interieur.gouv.fr/Actualites/L-actu-du-Ministere/Attestation-de-deplacement-derogatoire-et-justificatif-de-deplacement-professionnel"
+            >
+              ici.
             </a>
           </p>
         </div>
@@ -160,14 +166,14 @@
           >
             <i class="fas fa-cogs" /> Regénérer
           </button>
-          <a
+          <button
             v-if="generated"
-            :href="pdfURL"
             class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded ml-2"
             download="attestation.pdf"
+            @click.prevent="downloadPDF()"
           >
             <i class="fas fa-download" /> Enregistrer
-          </a>
+          </button>
         </div>
       </div>
       <div class="">
@@ -185,13 +191,10 @@
 <script>
 import Signature from '@/components/Signature'
 import axios from 'axios'
-
+import { PDFDocument } from 'pdf-lib'
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
-const port = process.env.VUE_APP_BACKEND_PORT || 3000
-const host = process.env.VUE_APP_HOST || 'localhost'
-const protocol = process.env.VUE_APP_HTTP || 'http'
-
+import { isMobile } from 'mobile-device-detect'
 export default {
   name: 'Home',
   components: {
@@ -206,14 +209,12 @@ export default {
       city: null,
       location: null,
       gettingLocation: false,
-      errorStr: null,
       reason: null,
       generated: false,
       submitted: false,
-      pdfPath: null,
-      port: port,
-      host: host,
-      protocol: protocol,
+      pdfURL: null,
+      signedPdf: null,
+      unsignedPDF: null,
       options: [
         {
           id: 0,
@@ -221,31 +222,36 @@ export default {
           desc: `déplacements entre le domicile et le lieu d’exercice de l’activité professionnelle,
           lorsqu’ils sont indispensables à l’exercice d’activités ne pouvant être organisées
           sous forme de télétravail (sur justificatif permanent) ou déplacements
-          professionnels ne pouvant être différés `
+          professionnels ne pouvant être différés `,
+          coordinates: { x: 51, y: 424 }
         },
         {
           id: 1,
           text: 'Déplacement pour achats de première nécessité',
           desc: `déplacements pour effectuer des achats de première nécessité dans des
-          établissements autorisés (liste sur gouvernement.fr); `
+          établissements autorisés (liste sur gouvernement.fr); `,
+          coordinates: { x: 51, y: 350 }
         },
         {
           id: 2,
           text: 'Déplacement pour motif de santé',
-          desc: null
+          desc: null,
+          coordinates: { x: 51, y: 304 }
         },
         {
           id: 3,
           text: 'Déplacement pour motif familial impérieux',
           desc: `déplacements pour motif familial impérieux, pour l’assistance aux personnes
-          vulnérables ou la garde d’enfants `
+          vulnérables ou la garde d’enfants `,
+          coordinates: { x: 51, y: 274 }
         },
         {
           id: 4,
           text: 'Déplacements brefs (à proximité du domicile)',
           desc: `déplacements brefs, à proximité du domicile, liés à l’activité physique individuelle
           des personnes, à l’exclusion de toute pratique sportive collective, et aux besoins
-          des animaux de compagnie.`
+          des animaux de compagnie.`,
+          coordinates: { x: 51, y: 228 }
         }
       ]
     }
@@ -254,10 +260,10 @@ export default {
     isValid() {
       return (
         !!this.name &&
-        !!this.reason &&
         !!this.birthday &&
         !!this.address &&
-        !!this.city
+        !!this.city &&
+        (!!this.reason || this.reason === 0)
       )
     },
     signature() {
@@ -267,35 +273,29 @@ export default {
       }
       return null
     },
-    reasonDesc() {
-      const option = this.options.find(o => o.id == parseInt(this.reason))
-      return option && option.desc ? option.desc : ''
+    reasonObj() {
+      return this.options.find(o => o.id == parseInt(this.reason))
     },
-    pdfURL() {
-      return this.pdfPath
-        ? process.env.NODE_ENV === 'production'
-          ? `${protocol}://${host}/preview/${this.pdfPath}`
-          : `${protocol}://${host}:${port}/preview/${this.pdfPath}`
-        : '#'
+    reasonDesc() {
+      const option = this.reasonObj
+      return option && option.desc ? option.desc : ''
     }
   },
   async mounted() {
     this.gettingLocation = true
     try {
-      this.gettingLocation = false
       this.location = await this.getLocation()
       const address = await this.addressByCoordinates(this.location.coords)
       this.city = address.city
     } catch (e) {
-      this.gettingLocation = false
-      this.errorStr = e.message
+      // Do nothing
     }
 
     if (localStorage.name) {
       this.name = localStorage.name
     }
     if (localStorage.birthday) {
-      this.birthday = new Date(localStorage.birthday)
+      this.birthday = localStorage.birthday
     }
     if (localStorage.address) {
       this.address = localStorage.address
@@ -309,15 +309,10 @@ export default {
     if (localStorage.signature && this.$refs.signature) {
       this.$refs.signature.$data.signatureImage = localStorage.signature
     }
-  },
-  sockets: {
-    connect: function() {
-      // console.log('socket connected')
-    },
-    preview: function(data) {
-      this.generated = true
-      this.pdfPath = data
-    }
+    // Load unsigned Pdf
+    this.unsignedPDF = await fetch('bin/template.pdf').then(res =>
+      res.arrayBuffer()
+    )
   },
   methods: {
     persist() {
@@ -329,21 +324,77 @@ export default {
         localStorage.setItem('signature', this.signature)
       }
     },
+    async downloadPDF() {
+      if (!this.pdfURL) {
+        await this.generate()
+      }
+      const currentDate = new Date()
+      const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
+      const day = ('0' + currentDate.getDate()).slice(-2)
+      const year = currentDate.getFullYear()
+      const link = document.createElement('a')
+      link.href = this.pdfURL
+      link.download = `Attestation ${this.name} ${day}-${month}-${year}.pdf`
+      link.click()
+    },
+    previewPDF(blob) {
+      this.pdfURL = URL.createObjectURL(blob)
+    },
 
-    generate() {
+    async generate() {
       if (!this.isValid) {
         this.submitted = true
         return
       }
       this.persist()
-      this.$socket.emit('generate', {
-        name: this.name,
-        birthday: this.birthday,
-        address: this.address,
-        city: this.city,
-        reason: this.reason,
-        signature: this.signature
+      // generate PDF !
+      const pdfDoc = await PDFDocument.load(this.unsignedPDF)
+      const firstPage = pdfDoc.getPages()[0]
+      const textSize = 14
+      const { width } = firstPage.getSize()
+      const signatureImage = await pdfDoc.embedPng(this.signature)
+      const signatureHeight = 45
+      const scale = signatureHeight / signatureImage.height
+      const currentDate = new Date()
+
+      const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
+      const day = ('0' + currentDate.getDate()).slice(-2)
+
+      firstPage.drawText(this.name || '', { x: 135, y: 622, size: textSize })
+      firstPage.drawText(this.birthday, { x: 135, y: 593, size: textSize })
+      firstPage.drawText(this.address || '', { x: 135, y: 559, size: textSize })
+      firstPage.drawText(this.city, {
+        x: 375,
+        y: 141,
+        size: textSize
       })
+      firstPage.drawText('x', {
+        x: this.reasonObj.coordinates.x,
+        y: this.reasonObj.coordinates.y,
+        size: textSize + 5
+      })
+      firstPage.drawText(day, {
+        x: 478,
+        y: 140,
+        size: textSize
+      })
+      firstPage.drawText(month, {
+        x: 502,
+        y: 140,
+        size: textSize
+      })
+      firstPage.drawImage(signatureImage, {
+        x: width - 150,
+        y: 65,
+        width: signatureImage.width * scale,
+        height: signatureHeight
+      })
+      this.signedPdf = await pdfDoc.save()
+      this.generated = true
+      this.previewPDF(new Blob([this.signedPdf], { type: 'application/pdf' }))
+      if (isMobile) {
+        this.downloadPDF()
+      }
     },
     async addressByCoordinates({ latitude, longitude }) {
       const { data } = await axios.get(ENDPOINT, {
@@ -361,7 +412,6 @@ export default {
         if (!('geolocation' in navigator)) {
           reject(new Error('Geolocation is not available.'))
         }
-
         navigator.geolocation.getCurrentPosition(
           pos => {
             resolve(pos)
