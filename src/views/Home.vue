@@ -465,7 +465,7 @@ export default {
           -2
         )}-${('0' + (enddate.getMonth() + 1)).slice(
           -2
-        )}-${enddate.getFullYear()}.pdf`
+        )}-${enddate.getFullYear()}.zip`
         link.click()
       })
     },
