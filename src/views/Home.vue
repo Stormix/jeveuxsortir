@@ -135,7 +135,7 @@
           </svg>
           <p>
             Attention! les versions numériques de l'attestation ne sont plus
-            acceptées. Veuillez imprimer le document généré.<a
+            acceptées. Veuillez imprimer le(s) document(s) généré(s).<a
               class="font-bold"
               href="https://twitter.com/Place_Beauvau/status/1240236276416118784"
             >
@@ -151,13 +151,69 @@
             </a>
           </p>
         </div>
+
+        <div v-if="showMore" class="grid grid-cols-2 gap-4">
+          <div>
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="startDate"
+              >
+                Du
+              </label>
+              <input
+                id="startDate"
+                v-model="startDate"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="date"
+                placeholder="20-03-2020"
+              />
+            </div>
+          </div>
+          <div>
+            <div class="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="endDate"
+              >
+                Au
+              </label>
+              <input
+                id="endDate"
+                v-model="endDate"
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="date"
+                placeholder="25-03-2020"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div v-show="generating" class="mb-4 w-full">
+          <div class="shadow w-full bg-grey-light">
+            <div
+              class="bg-indigo-700 text-xs leading-none py-1 text-center text-white"
+              :style="`width: ${progress}%`"
+            >
+              {{ progress }}%
+            </div>
+          </div>
+        </div>
+
         <div class="flex items-center ">
           <button
             v-if="!generated"
             class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
             @click.prevent="generate"
           >
-            <i class="fas fa-cogs" /> Générer mon attestation
+            <i class="fas fa-cogs" /> Générer 1 attestation
+          </button>
+          <button
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded ml-2 mr-2 "
+            :class="{ spinner: generating }"
+            @click.prevent="generateN"
+          >
+            <i class="fas fa-cogs" /> {{ moreText }}
           </button>
           <button
             v-if="generated"
@@ -195,6 +251,7 @@ import { PDFDocument } from 'pdf-lib'
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
 import { isMobile } from 'mobile-device-detect'
+const JSZip = require('jszip')
 export default {
   name: 'Home',
   components: {
@@ -213,8 +270,13 @@ export default {
       generated: false,
       submitted: false,
       pdfURL: null,
-      signedPdf: null,
       unsignedPDF: null,
+      showMore: false,
+      startDate: null,
+      endDate: false,
+      generating: false,
+      progress: 0,
+      moreText: 'Générer plusieurs',
       options: [
         {
           id: 0,
@@ -257,6 +319,15 @@ export default {
     }
   },
   computed: {
+    diffDates() {
+      if (!this.startDate || !this.endDate) {
+        return -1
+      }
+      const date1 = new Date(this.startDate)
+      const date2 = new Date(this.endDate)
+      const diffTime = Math.abs(date2 - date1)
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    },
     isValid() {
       return (
         !!this.name &&
@@ -279,6 +350,15 @@ export default {
     reasonDesc() {
       const option = this.reasonObj
       return option && option.desc ? option.desc : ''
+    }
+  },
+  watch: {
+    diffDates(newValue) {
+      if (newValue > 0) {
+        this.moreText = `Générer ${newValue} attestations`
+      } else {
+        this.moreText = 'Générer plusieurs'
+      }
     }
   },
   async mounted() {
@@ -340,14 +420,56 @@ export default {
     previewPDF(blob) {
       this.pdfURL = URL.createObjectURL(blob)
     },
-
-    async generate() {
+    async generateN() {
+      if (!this.showMore) {
+        this.showMore = true
+        return
+      }
       if (!this.isValid) {
         this.submitted = true
         return
       }
       this.persist()
-      // generate PDF !
+      this.generating = true
+      this.progress = 0
+      const step = 100 / this.diffDates
+      const zip = new JSZip()
+      let startdate = new Date(this.startDate)
+      let pdfBlob = null
+      for (let i = 1; i <= this.diffDates; i++) {
+        this.progress += step
+        startdate = new Date(this.startDate)
+        const date = new Date(startdate.setDate(startdate.getDate() + i))
+        pdfBlob = await this.generatePDF(date)
+        zip.file(
+          `Attestation ${this.name} ${('0' + date.getDate()).slice(-2)}-${(
+            '0' +
+            (date.getMonth() + 1)
+          ).slice(-2)}-${date.getFullYear()}.pdf`,
+          pdfBlob
+        )
+      }
+      this.progress = 100
+      this.generating = false
+      zip.generateAsync({ type: 'blob' }).then(blob => {
+        let startdate = new Date(this.startDate)
+        let enddate = new Date(this.endDate)
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+
+        link.download = `Attestations du ${('0' + startdate.getDate()).slice(
+          -2
+        )}-${('0' + (startdate.getMonth() + 1)).slice(
+          -2
+        )}-${startdate.getFullYear()} au  ${('0' + enddate.getDate()).slice(
+          -2
+        )}-${('0' + (enddate.getMonth() + 1)).slice(
+          -2
+        )}-${enddate.getFullYear()}.pdf`
+        link.click()
+      })
+    },
+    async generatePDF(date) {
       const pdfDoc = await PDFDocument.load(this.unsignedPDF)
       const firstPage = pdfDoc.getPages()[0]
       const textSize = 14
@@ -355,8 +477,7 @@ export default {
       const signatureImage = await pdfDoc.embedPng(this.signature)
       const signatureHeight = 45
       const scale = signatureHeight / signatureImage.height
-      const currentDate = new Date()
-
+      const currentDate = new Date(date)
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
       const day = ('0' + currentDate.getDate()).slice(-2)
 
@@ -389,12 +510,22 @@ export default {
         width: signatureImage.width * scale,
         height: signatureHeight
       })
-      this.signedPdf = await pdfDoc.save()
+      const signedPDFBytes = await pdfDoc.save()
+      return new Blob([signedPDFBytes], { type: 'application/pdf' })
+    },
+    async generate() {
+      if (!this.isValid) {
+        this.submitted = true
+        return
+      }
+      this.persist()
+      const pdfBlob = await this.generatePDF(new Date())
       this.generated = true
-      this.previewPDF(new Blob([this.signedPdf], { type: 'application/pdf' }))
+      // generate PDF !
       if (isMobile) {
         this.downloadPDF()
       }
+      return this.previewPDF(pdfBlob)
     },
     async addressByCoordinates({ latitude, longitude }) {
       const { data } = await axios.get(ENDPOINT, {
@@ -436,5 +567,34 @@ export default {
 .media-content {
   margin-top: auto;
   margin-bottom: auto;
+}
+.spinner {
+  position: relative;
+  color: transparent !important;
+  pointer-events: none;
+}
+
+.spinner::after {
+  content: '';
+  position: absolute !important;
+  top: calc(50% - (1em / 2));
+  left: calc(50% - (1em / 2));
+  display: block;
+  width: 1em;
+  height: 1em;
+  border: 2px solid currentColor;
+  border-radius: 9999px;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  animation: spinAround 500ms infinite linear;
+}
+
+@keyframes spinAround {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
