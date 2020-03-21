@@ -134,7 +134,7 @@
             />
           </svg>
           <p>
-            Apparement les versions numériques de l'attestation ne sont plus
+            Attention! les versions numériques de l'attestation ne sont plus
             acceptées. Veuillez imprimer le document généré pour éviter les
             problèmes avec les autorités.
             <a
