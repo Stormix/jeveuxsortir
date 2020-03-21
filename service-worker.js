@@ -1,5 +1,5 @@
 workbox.core.setCacheNameDetails({ prefix: 'd4' })
-const LATEST_VERSION = 'v0.3'
+const LATEST_VERSION = 'v0.4'
 self.addEventListener('activate', () => {
   console.log(`%c ${LATEST_VERSION} `, 'background: #ddd; color: #0000ff')
   if (caches) {

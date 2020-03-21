@@ -5,6 +5,9 @@ import router from './router'
 import './assets/tailwind.css'
 import VueSignaturePad from 'vue-signature-pad'
 import VueSocketIO from 'vue-socket.io'
+import VueDisqus from 'vue-disqus'
+
+Vue.use(VueDisqus)
 
 const port = process.env.VUE_APP_BACKEND_PORT || 3000
 const host = process.env.VUE_APP_HOST || 'localhost'

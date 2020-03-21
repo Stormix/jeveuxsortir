@@ -15,14 +15,10 @@ export default (app, http) => {
       const { name, birthday, address, city, reason, signature } = data
       const templatePath = './srv/bin/template.pdf'
       const currentDate = new Date()
-      const dt = new Date(birthday)
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
       const day = ('0' + currentDate.getDate()).slice(-2)
       const filledFields = {
-        'Champ de texte 2.Page 1': `${('0' + dt.getDate()).slice(-2)}-${(
-          '0' +
-          (dt.getMonth() + 1)
-        ).slice(-2)}-${dt.getFullYear()}`,
+        'Champ de texte 2.Page 1': birthday,
         'Champ de texte 1.Page 1': name,
         'Champ de texte 3.Page 1': address
         // 'Champ de texte 4.Page 1': city

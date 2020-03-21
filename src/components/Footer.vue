@@ -2,7 +2,7 @@
   <footer>
     <div class="mx-auto text-center">
       <p>
-        <strong>JeVeuxSortir</strong> (V0.3) by
+        <strong>JeVeuxSortir</strong> (V0.4) by
         <a class="text-indigo-700" href="https://stormix.co">Anas Mazouni</a>.
         Source code is on
         <a

@@ -5,7 +5,33 @@
         <h1 class="text-3xl">
           Générateur d'attestation de déplacement
         </h1>
-
+        <div
+          v-if="!isValid && submitted"
+          class="bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md"
+          role="alert"
+        >
+          <div class="flex">
+            <div class="py-1">
+              <svg
+                class="fill-current h-6 w-6 text-red-500 mr-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold">
+                Erreur !
+              </p>
+              <p class="text-sm">
+                Merci de remplir tout les champs.
+              </p>
+            </div>
+          </div>
+        </div>
         <div class="mt-4 mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2" for="name">
             Nom Complet
@@ -13,6 +39,7 @@
           <input
             id="name"
             v-model="name"
+            required
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             type="text"
             placeholder="Mme / M. ..."
@@ -36,13 +63,15 @@
         <div class="mb-4">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
-            for="address"
+            for="birthday"
           >
             Né le
           </label>
-          <datepicker
+          <input
+            id="birthday"
             v-model="birthday"
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
             placeholder="Né le ..."
           />
         </div>
@@ -156,7 +185,6 @@
 <script>
 import Signature from '@/components/Signature'
 import axios from 'axios'
-import Datepicker from 'vuejs-datepicker'
 
 const ENDPOINT = 'https://nominatim.openstreetmap.org/reverse'
 const FORMAT = 'jsonv2'
@@ -167,8 +195,7 @@ const protocol = process.env.VUE_APP_HTTP || 'http'
 export default {
   name: 'Home',
   components: {
-    Signature,
-    Datepicker
+    Signature
   },
   data() {
     return {
@@ -182,6 +209,7 @@ export default {
       errorStr: null,
       reason: null,
       generated: false,
+      submitted: false,
       pdfPath: null,
       port: port,
       host: host,
@@ -223,6 +251,15 @@ export default {
     }
   },
   computed: {
+    isValid() {
+      return (
+        !!this.name &&
+        !!this.reason &&
+        !!this.birthday &&
+        !!this.address &&
+        !!this.city
+      )
+    },
     signature() {
       if (this.$refs.signature) {
         this.$refs.signature.saveSignature()
@@ -288,10 +325,16 @@ export default {
       localStorage.setItem('name', this.name)
       localStorage.setItem('birthday', this.birthday)
       localStorage.setItem('address', this.address)
-      localStorage.setItem('signature', this.signature)
+      if (this.signature) {
+        localStorage.setItem('signature', this.signature)
+      }
     },
 
     generate() {
+      if (!this.isValid) {
+        this.submitted = true
+        return
+      }
       this.persist()
       this.$socket.emit('generate', {
         name: this.name,

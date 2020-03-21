@@ -36,6 +36,13 @@
           >
             A propos
           </router-link>
+          <a
+            href="https://github.com/Stormix/jeveuxsortir/projects/1"
+            class="block ml-4 mt-4 lg:inline-block lg:mt-0 text-indigo-200 hover:text-white"
+            target="_blank"
+          >
+            Roadmap
+          </a>
         </div>
         <div>
           <router-link
