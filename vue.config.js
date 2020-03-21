@@ -2,7 +2,7 @@ const manifestJSON = require('./public/manifest.json')
 module.exports = {
   pluginOptions: {
     pwa: {
-      assetsVersion: 'v0.2',
+      assetsVersion: 'v0.3',
       themeColor: manifestJSON.theme_color,
       name: manifestJSON.short_name,
       msTileColor: manifestJSON.background_color,
