@@ -76,6 +76,18 @@
           />
         </div>
         <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+            À
+          </label>
+          <input
+            id="birthcity"
+            v-model="birthcity"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="text"
+            placeholder=""
+          />
+        </div>
+        <div class="mb-4">
           <label
             class="block text-gray-700 text-sm font-bold mb-2"
             for="reason"
@@ -112,6 +124,18 @@
             class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             type="text"
             placeholder="Ville"
+          />
+        </div>
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2" for="city">
+            Sortie à
+          </label>
+          <input
+            id="time"
+            v-model="time"
+            class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            type="time"
+            placeholder=""
           />
         </div>
         <div class="mb-4">
@@ -267,10 +291,13 @@ export default {
       location: null,
       gettingLocation: false,
       reason: null,
+      birthcity: null,
+      time: null,
       generated: false,
       submitted: false,
       pdfURL: null,
       unsignedPDF: null,
+      checkMark: null,
       showMore: false,
       startDate: null,
       endDate: false,
@@ -281,39 +308,56 @@ export default {
         {
           id: 0,
           text: 'Déplacement professionelle',
-          desc: `déplacements entre le domicile et le lieu d’exercice de l’activité professionnelle,
-          lorsqu’ils sont indispensables à l’exercice d’activités ne pouvant être organisées
-          sous forme de télétravail (sur justificatif permanent) ou déplacements
-          professionnels ne pouvant être différés `,
-          coordinates: { x: 51, y: 424 }
+          desc: `Déplacements entre le domicile et le lieu d’exercice de l’activité professionnelle,
+          lorsqu’ils sont indispensables à l’exercice d’activités ne pouvant être organisées sous
+          forme de télétravail ou déplacements professionnels ne pouvant être différés2
+          . `,
+          coordinates: { x: 77, y: 525 }
         },
         {
           id: 1,
           text: 'Déplacement pour achats de première nécessité',
-          desc: `déplacements pour effectuer des achats de première nécessité dans des
-          établissements autorisés (liste sur gouvernement.fr); `,
-          coordinates: { x: 51, y: 350 }
+          desc: `Déplacements pour effectuer des achats de fournitures nécessaires à l’activité
+          professionnelle et des achats de première nécessité3 dans des établissements dont les
+          activités demeurent autorisées (liste sur gouvernement.fr). `,
+          coordinates: { x: 77, y: 350 }
         },
         {
           id: 2,
           text: 'Déplacement pour motif de santé',
-          desc: null,
-          coordinates: { x: 51, y: 304 }
+          desc: `Consultations et soins ne pouvant être assurés à distance et ne pouvant être différés ;
+          consultations et soins des patients atteints d'une affection de longue durée. `,
+          coordinates: { x: 77, y: 304 }
         },
         {
           id: 3,
           text: 'Déplacement pour motif familial impérieux',
           desc: `déplacements pour motif familial impérieux, pour l’assistance aux personnes
           vulnérables ou la garde d’enfants `,
-          coordinates: { x: 51, y: 274 }
+          coordinates: { x: 77, y: 274 }
         },
         {
           id: 4,
-          text: 'Déplacements brefs (à proximité du domicile)',
-          desc: `déplacements brefs, à proximité du domicile, liés à l’activité physique individuelle
-          des personnes, à l’exclusion de toute pratique sportive collective, et aux besoins
-          des animaux de compagnie.`,
-          coordinates: { x: 51, y: 228 }
+          text: 'Déplacements brefs (à proximité du domicile <= 1 Km)',
+          desc: `Déplacements brefs, dans la limite d'une heure quotidienne et dans un rayon maximal
+          d'un kilomètre autour du domicile, liés soit à l'activité physique individuelle des
+          personnes, à l'exclusion de toute pratique sportive collective et de toute proximité avec
+          d'autres personnes, soit à la promenade avec les seules personnes regroupées dans un
+          même domicile, soit aux besoins des animaux de compagnie. `,
+          coordinates: { x: 77, y: 228 }
+        },
+        {
+          id: 5,
+          text: 'Convocation judiciaire ou administrative.',
+          desc: null,
+          coordinates: { x: 77, y: 228 }
+        },
+        {
+          id: 6,
+          text:
+            'Participation à des missions d’intérêt général sur demande de l’autorité administrative. ',
+          desc: null,
+          coordinates: { x: 77, y: 228 }
         }
       ]
     }
@@ -386,11 +430,20 @@ export default {
     if (localStorage.reason) {
       this.reason = localStorage.reason
     }
+    if (localStorage.birthcity) {
+      this.birthcity = localStorage.birthcity
+    }
+    if (localStorage.time) {
+      this.time = localStorage.time
+    }
     if (localStorage.signature && this.$refs.signature) {
       this.$refs.signature.$data.signatureImage = localStorage.signature
     }
     // Load unsigned Pdf
     this.unsignedPDF = await fetch('bin/template.pdf').then(res =>
+      res.arrayBuffer()
+    )
+    this.checkMark = await fetch('img/icons/check.jpg').then(res =>
       res.arrayBuffer()
     )
   },
@@ -399,7 +452,12 @@ export default {
       localStorage.setItem('reason', this.reason)
       localStorage.setItem('name', this.name)
       localStorage.setItem('birthday', this.birthday)
+      localStorage.setItem('birthcity', this.birthcity)
       localStorage.setItem('address', this.address)
+      localStorage.setItem('time', this.time)
+      if (!this.time) {
+        localStorage.removeItem('time')
+      }
       if (this.signature) {
         localStorage.setItem('signature', this.signature)
       }
@@ -473,40 +531,52 @@ export default {
       const pdfDoc = await PDFDocument.load(this.unsignedPDF)
       const firstPage = pdfDoc.getPages()[0]
       const textSize = 14
-      const { width } = firstPage.getSize()
       const signatureImage = await pdfDoc.embedPng(this.signature)
       const signatureHeight = 45
       const scale = signatureHeight / signatureImage.height
       const currentDate = new Date(date)
       const month = ('0' + (currentDate.getMonth() + 1)).slice(-2)
       const day = ('0' + currentDate.getDate()).slice(-2)
-
-      firstPage.drawText(this.name || '', { x: 135, y: 622, size: textSize })
-      firstPage.drawText(this.birthday, { x: 135, y: 593, size: textSize })
-      firstPage.drawText(this.address || '', { x: 135, y: 559, size: textSize })
+      const time = this.time ? this.time.split(':') : null
+      const hours = this.time ? time[0] : ''
+      const minutes = this.time ? time[1] : ''
+      firstPage.drawText(this.name || '', { x: 135, y: 685, size: textSize })
+      firstPage.drawText(this.birthday, { x: 135, y: 659, size: textSize })
+      firstPage.drawText(this.birthcity || '', {
+        x: 100,
+        y: 635,
+        size: textSize
+      })
+      firstPage.drawText(this.address || '', { x: 138, y: 610, size: textSize })
       firstPage.drawText(this.city, {
-        x: 375,
-        y: 141,
+        x: 120,
+        y: 225,
         size: textSize
       })
-      firstPage.drawText('x', {
-        x: this.reasonObj.coordinates.x,
-        y: this.reasonObj.coordinates.y,
-        size: textSize + 5
+      // TODO: fix the layering issue
+      // firstPage.drawText('x', {
+      //   x: this.reasonObj.coordinates.x,
+      //   y: this.reasonObj.coordinates.y,
+      //   size: textSize + 5
+      // })
+      firstPage.drawText(`${day}-${month}-2020`, {
+        x: 97,
+        y: 202,
+        size: textSize - 2
       })
-      firstPage.drawText(day, {
-        x: 478,
-        y: 140,
-        size: textSize
+      firstPage.drawText(hours, {
+        x: 190,
+        y: 202,
+        size: textSize - 2
       })
-      firstPage.drawText(month, {
-        x: 502,
-        y: 140,
-        size: textSize
+      firstPage.drawText(minutes, {
+        x: 225,
+        y: 202,
+        size: textSize - 2
       })
       firstPage.drawImage(signatureImage, {
-        x: width - 150,
-        y: 65,
+        x: 121,
+        y: 140,
         width: signatureImage.width * scale,
         height: signatureHeight
       })
